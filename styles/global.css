@@ -1,0 +1,15 @@
+html,
+body,
+#__nuxt {
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    @apply font-sans;
+}
+body,
+#__nuxt {
+    @apply color-base bg-base;
+}
