@@ -13,10 +13,10 @@ export default defineConfig({
         {
             'color-base': 'color-neutral-800 dark:color-neutral-200',
             'bg-base': 'bg-neutral-50 dark:bg-#1b1b1b',
-            'bg-secondary': 'bg-neutral-150 dark:bg-#222',
-            'border-base': 'border-#8882',
+            'bg-secondary': 'bg-neutral-100 dark:bg-#222',
+            'border-base': 'border-neutral-300 dark:border-neutral-700',
 
-            'bg-tooltip': 'bg-white:75 dark:bg-#1b1b1b:75 backdrop-blur-8',
+            'bg-tooltip': 'bg-neutral-50:75 dark:bg-#1b1b1b:75 backdrop-blur-8',
             'bg-code': 'bg-gray5:5',
 
             'color-active': 'color-primary-600 dark:color-primary-400',
@@ -27,6 +27,10 @@ export default defineConfig({
                 'border border-base rounded flex gap-2 items-center px2 py1 op75 hover:op100 hover:bg-active disabled:pointer-events-none disabled:op30!',
             'btn-action-sm': 'btn-action text-sm',
             'btn-action-active': 'color-active border-active! bg-active op100!',
+
+            'z-overlay': 'z-40',
+            'z-header': 'z-50',
+            'z-header-overlay': 'z-60',
         },
         [
             /^bg-glass(:\d+)?$/,

@@ -1,6 +1,7 @@
 <template>
     <div
         class="fixed top-0 h-14 w-full b-0 b-b"
+        z-header
         border-base
         border-solid
         bg-glass
@@ -12,10 +13,3 @@
         <slot />
     </div>
 </template>
-
-<script setup lang="ts">
-import { useDark } from '@vueuse/core';
-import '~/styles/global.css';
-
-useDark();
-</script>
