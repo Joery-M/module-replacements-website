@@ -1,7 +1,11 @@
 import Fuse from 'fuse.js';
-import { ModuleReplacement } from '~/types/module-manifests';
+import * as v from 'valibot';
+import type {
+    KeyedModuleReplacement,
+    ModuleReplacement,
+} from '~/types/module-manifests';
 
-const fuseInstance = new Fuse<{ key: string; value: ModuleReplacement }>([], {
+const fuseInstance = new Fuse<KeyedModuleReplacement>([], {
     keys: [
         'value.moduleName',
         { name: 'value.replacement', weight: 0.5 },
@@ -12,14 +16,18 @@ const fuseInstance = new Fuse<{ key: string; value: ModuleReplacement }>([], {
     ignoreDiacritics: true,
 });
 
+const validation = v.object({
+    q: v.pipe(v.string(), v.minLength(1)),
+});
+
 export default defineCachedEventHandler(
     async (event) => {
-        const { q } = getQuery(event) ?? {};
-        if (q == null || typeof q !== 'string') {
-            throw Error('No search term provided');
-        }
+        const { q } = await getValidatedQuery(event, (d) =>
+            v.parse(validation, d),
+        );
+
         const storage = useStorage<ModuleReplacement>('replacement-manifest');
-        const arr: { key: string; value: ModuleReplacement }[] = [];
+        const arr: KeyedModuleReplacement[] = [];
         for (const key of await storage.getKeys()) {
             const value = await storage.getItem(key);
             if (value) {
@@ -28,7 +36,7 @@ export default defineCachedEventHandler(
         }
         fuseInstance.setCollection(arr);
 
-        return fuseInstance.search(q, { limit: 10 }).map(({ item }) => item);
+        return fuseInstance.search(q, { limit: 50 }).map(({ item }) => item);
     },
     { maxAge: 60 },
 );

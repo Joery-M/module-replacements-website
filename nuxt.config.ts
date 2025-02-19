@@ -12,6 +12,7 @@ export default defineNuxtConfig({
         },
         storage: {
             'replacement-manifest': { driver: 'fs-lite', base: './data/db' },
+            'replacement-docs': { driver: 'fs-lite', base: './data/docs' },
         },
         scheduledTasks: {
             // Run `fetch-manifests` every hour

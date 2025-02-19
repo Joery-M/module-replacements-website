@@ -1,5 +1,5 @@
 <template>
-    <form role="search" @submit.prevent>
+    <form role="search" @submit.prevent flex justify-center>
         <div ref="overlay-wrapper" class="overlay-wrapper" max-w-full w-72>
             <input
                 id="searchbox"
@@ -10,6 +10,10 @@
                 aria-haspopup="listbox"
                 :aria-expanded="showDropdown"
                 aria-controls="autocomplete-overlay"
+                @keydown.enter="
+                    searchResults.length > 0 && openManifest(searchResults[0])
+                "
+                @keydown.down.prevent="selectNext(undefined, 0)"
             />
             <p
                 role="status"
@@ -28,51 +32,106 @@
                         : 'results are available'
                 }}
             </p>
-            <div id="autocomplete-overlay" :class="{ show: showDropdown }">
-                <TransitionGroup name="list" tag="ul" m-0 p-0 list-none>
-                    <template v-for="result in searchResults" :key="result.key">
+            <div
+                id="autocomplete-overlay"
+                :class="{ show: showDropdown }"
+                tabindex="-1"
+            >
+                <ul m-0 p-0 list-none text-left>
+                    <template
+                        v-for="manifest in searchResults"
+                        :key="manifest.key"
+                    >
                         <li
-                            px-4
+                            :ref="(el) => listItems.set(manifest, el as any)"
+                            px-2
                             py-2
                             role="option"
+                            text-nowrap
+                            of-hidden
                             tabindex="0"
-                            @click="console.log(result)"
+                            @click="openManifest(manifest)"
+                            @keydown.enter="openManifest(manifest)"
+                            @keydown.up.prevent="
+                                selectNext($event.target as HTMLLIElement, -1)
+                            "
+                            @keydown.down.prevent="
+                                selectNext($event.target as HTMLLIElement)
+                            "
                         >
-                            {{ result.value.category }}
-                            {{ result.value.moduleName }}
+                            <ModuleBadge :module="manifest.value" mr-1 />
+                            {{ manifest.value.moduleName }}
                         </li>
                     </template>
-                </TransitionGroup>
+                </ul>
             </div>
         </div>
     </form>
 </template>
 
 <script setup lang="ts">
-import { TransitionGroup } from 'vue';
+import type { KeyedModuleReplacement } from '~/types/module-manifests';
+
+const props = defineProps<{
+    value?: string;
+}>();
+
+watch(
+    () => props.value,
+    (val) => {
+        if (val) {
+            searchValue.value = val;
+        }
+    },
+);
 
 const overlayWrapper = useTemplateRef('overlay-wrapper');
 const wrapperFocus = useFocusWithin(overlayWrapper);
 
 const searchValue = ref('');
-const debouncedSearch = useDebounce(searchValue, 500);
-const searchResults = computedAsync(
-    async () => {
-        if (!debouncedSearch.value) return [];
+const searchResults = shallowRef<KeyedModuleReplacement[]>([]);
 
+watchDebounced(
+    searchValue,
+    async (q) => {
+        if (!q) searchResults.value = [];
         const req = await useLazyFetch('/api/search', {
-            query: { q: debouncedSearch.value },
+            query: { q },
         });
 
-        return req.data.value ?? [];
+        searchResults.value = req.data.value ?? [];
     },
-    [],
-    { lazy: true },
+    { debounce: 500 },
 );
 
 const showDropdown = computed(
     () => wrapperFocus.focused.value && searchResults.value.length > 0,
 );
+
+const listItems = shallowReactive(
+    new Map<KeyedModuleReplacement, HTMLLIElement>(),
+);
+
+function openManifest(manifest: KeyedModuleReplacement) {
+    useRouter().push({ query: { q: `${manifest.key}` } });
+}
+
+function selectNext(element?: HTMLLIElement, offset = 1) {
+    const entry = Array.from(listItems.entries()).find(
+        ([, el]) => el === element,
+    );
+    const entryIndex = entry
+        ? searchResults.value.findIndex((r) => r.key === entry[0].key)
+        : 0;
+
+    const i = entryIndex + offset;
+
+    const wrappedI =
+        i < 0 ? searchResults.value.length - 1 : i % searchResults.value.length;
+    const item = searchResults.value[wrappedI];
+
+    listItems.get(item)?.focus();
+}
 </script>
 
 <style lang="scss" scoped>
@@ -91,7 +150,12 @@ const showDropdown = computed(
     }
 
     li[role='option'] {
-        @apply cursor-pointer;
+        @apply cursor-pointer transition-100 outline-none;
+
+        &:focus-visible,
+        &:hover {
+            @apply bg-primary/25;
+        }
     }
 }
 

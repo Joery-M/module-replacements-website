@@ -28,6 +28,13 @@ export default defineConfig({
             'btn-action-sm': 'btn-action text-sm',
             'btn-action-active': 'color-active border-active! bg-active op100!',
 
+            badge: 'color-light min-w-7 text-center px-1 py-0.5 inline-block text-xs rounded-md uppercase',
+
+            'badge-documented': 'badge bg-green-700',
+            'badge-native': 'badge bg-yellow-700',
+            'badge-none': 'badge bg-neutral-600',
+            'badge-simple': 'badge bg-cyan-700',
+
             'z-overlay': 'z-40',
             'z-header': 'z-50',
             'z-header-overlay': 'z-60',

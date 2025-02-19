@@ -1,9 +1,13 @@
-import { ManifestModule, ModuleReplacement } from '~/types/module-manifests';
+import type {
+    ManifestModule,
+    ModuleReplacement,
+} from '~/types/module-manifests';
+import type { GithubJsonFile, GithubMarkdownFile } from '~/types/ungh';
 
 const MANIFEST_URLS = [
-    'https://raw.githubusercontent.com/es-tooling/module-replacements/refs/heads/main/manifests/micro-utilities.json',
-    'https://raw.githubusercontent.com/es-tooling/module-replacements/refs/heads/main/manifests/native.json',
-    'https://raw.githubusercontent.com/es-tooling/module-replacements/refs/heads/main/manifests/preferred.json',
+    'https://ungh.cc/repos/es-tooling/module-replacements/files/main/manifests/micro-utilities.json',
+    'https://ungh.cc/repos/es-tooling/module-replacements/files/main/manifests/native.json',
+    'https://ungh.cc/repos/es-tooling/module-replacements/files/main/manifests/preferred.json',
 ];
 
 export default defineTask({
@@ -12,23 +16,51 @@ export default defineTask({
     },
     async run() {
         const storage = useStorage<ModuleReplacement>('replacement-manifest');
+        const docStorage = useStorage<string>('replacement-docs');
 
         console.log('Fetching module replacement manifests');
 
-        const promises = MANIFEST_URLS.map(async (manifestUrl) => {
-            const { moduleReplacements } = await fetch(manifestUrl).then(
-                (r) => r.json() as Promise<ManifestModule>,
+        const fetchDocumentation = async (
+            key: string,
+            docPath: string,
+        ): Promise<void> => {
+            const path = docPath.endsWith('.md') ? docPath : `${docPath}.md`;
+            const res = await fetch(
+                `https://ungh.cc/repos/es-tooling/module-replacements/files/main/docs/modules/${path}`,
             );
-            return moduleReplacements;
+            if (res.status === 200) {
+                const data = (await res.json()) as GithubMarkdownFile;
+                await docStorage.setItem(key, data.file.contents);
+            }
+        };
+
+        const promises = MANIFEST_URLS.map(async (manifestUrl) => {
+            const json = await fetch(manifestUrl).then(
+                (r) => r.json() as Promise<GithubJsonFile>,
+            );
+
+            return (JSON.parse(json.file.contents) as ManifestModule)
+                .moduleReplacements;
         });
 
         const promiseResult = (await Promise.all(promises)).flat(1);
 
+        await docStorage.clear();
         await storage.clear();
 
-        const newItems = promiseResult.map(async (rep, i) => {
-            const key = `${rep.type}-${i.toString(16)}-${rep.moduleName.replaceAll('/', '___')}`;
+        const newItems = promiseResult.map(async (rep) => {
+            const baseName = `${rep.type}-${rep.moduleName.replaceAll('/', '___')}`;
+            let key = baseName;
+            let i = 0;
+            // Prevent duplicates
+            while (await storage.has(key)) {
+                key = `${baseName}-${i}`;
+            }
             await storage.setItem(key, rep);
+
+            if (rep.type === 'documented') {
+                await fetchDocumentation(key, rep.docPath);
+            }
         });
         await Promise.allSettled(newItems);
 

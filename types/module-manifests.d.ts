@@ -34,3 +34,8 @@ export type ModuleReplacement =
 export interface ManifestModule {
     moduleReplacements: ModuleReplacement[];
 }
+
+export interface KeyedModuleReplacement {
+    key: string;
+    value: ModuleReplacement;
+}
