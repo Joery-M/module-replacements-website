@@ -13,22 +13,22 @@ export default defineConfig({
         {
             'color-base': 'color-neutral-800 dark:color-neutral-200',
             'bg-base': 'bg-neutral-50 dark:bg-#1b1b1b',
-            'bg-secondary': 'bg-neutral-100 dark:bg-#222',
+            'bg-secondary': 'bg-neutral-200 dark:bg-#222',
             'border-base': 'border-neutral-300 dark:border-neutral-700',
 
             'bg-tooltip': 'bg-neutral-50:75 dark:bg-#1b1b1b:75 backdrop-blur-8',
-            'bg-code': 'bg-gray5:5',
+            'bg-code': 'bg-gray5:15',
 
             'color-active': 'color-primary-600 dark:color-primary-400',
             'border-active': 'border-primary-600/25 dark:border-primary-400/25',
-            'bg-active': 'bg-#8881',
+            'bg-active': 'bg-#8884',
 
             'btn-action':
                 'border border-base rounded flex gap-2 items-center px2 py1 op75 hover:op100 hover:bg-active disabled:pointer-events-none disabled:op30!',
             'btn-action-sm': 'btn-action text-sm',
             'btn-action-active': 'color-active border-active! bg-active op100!',
 
-            badge: 'color-light min-w-7 text-center px-1 py-0.5 inline-block text-xs rounded-md uppercase',
+            badge: 'color-light min-w-7 text-center px-1 py-0.5 inline-block text-0.75em line-height-4 rounded-md uppercase',
 
             'badge-documented': 'badge bg-green-700',
             'badge-native': 'badge bg-yellow-700',
@@ -39,11 +39,6 @@ export default defineConfig({
             'z-header': 'z-50',
             'z-header-overlay': 'z-60',
         },
-        [
-            /^bg-glass(:\d+)?$/,
-            ([, perc = ':75']) =>
-                `bg-neutral-100${perc} dark:bg-#222${perc} backdrop-blur-5`,
-        ],
     ],
     theme: {
         colors: {

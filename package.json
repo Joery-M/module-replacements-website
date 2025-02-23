@@ -10,6 +10,8 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@nuxtjs/color-mode": "3.5.2",
+    "@nuxtjs/mdc": "0.13.5",
     "@vueuse/core": "^12.7.0",
     "fuse.js": "^7.1.0",
     "nuxt": "^3.15.4",
@@ -27,8 +29,10 @@
     "eslint": "^9.20.1",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.3",
+    "nuxt-markdown-render": "^2.1.0",
     "prettier": "^3.5.1",
     "sass-embedded": "^1.85.0",
-    "unocss": "^65.5.0"
+    "unocss": "^65.5.0",
+    "unstorage": "^1.14.4"
   }
 }

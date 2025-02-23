@@ -1,6 +1,6 @@
 <template>
     <form role="search" @submit.prevent flex justify-center>
-        <div ref="overlay-wrapper" class="overlay-wrapper" max-w-full w-72>
+        <div ref="overlay-wrapper" class="overlay-wrapper" max-w-full w-96>
             <input
                 id="searchbox"
                 v-model.trim="searchValue"
@@ -49,7 +49,7 @@
                             role="option"
                             text-nowrap
                             of-hidden
-                            tabindex="0"
+                            tabindex="-1"
                             @click="openManifest(manifest)"
                             @keydown.enter="openManifest(manifest)"
                             @keydown.up.prevent="
@@ -76,32 +76,24 @@ const props = defineProps<{
     value?: string;
 }>();
 
-watch(
+const overlayWrapper = useTemplateRef('overlay-wrapper');
+const wrapperFocus = useFocusWithin(overlayWrapper);
+
+const searchValue = ref('');
+const searchDebounced = useDebounce(searchValue, 500);
+const { data: searchResults } = useFetch('/api/search', {
+    deep: false,
+    query: computed(() => ({ q: searchDebounced.value })),
+    default: () => [],
+});
+
+watchImmediate(
     () => props.value,
     (val) => {
         if (val) {
             searchValue.value = val;
         }
     },
-);
-
-const overlayWrapper = useTemplateRef('overlay-wrapper');
-const wrapperFocus = useFocusWithin(overlayWrapper);
-
-const searchValue = ref('');
-const searchResults = shallowRef<KeyedModuleReplacement[]>([]);
-
-watchDebounced(
-    searchValue,
-    async (q) => {
-        if (!q) searchResults.value = [];
-        const req = await useLazyFetch('/api/search', {
-            query: { q },
-        });
-
-        searchResults.value = req.data.value ?? [];
-    },
-    { debounce: 500 },
 );
 
 const showDropdown = computed(
@@ -112,8 +104,19 @@ const listItems = shallowReactive(
     new Map<KeyedModuleReplacement, HTMLLIElement>(),
 );
 
-function openManifest(manifest: KeyedModuleReplacement) {
-    useRouter().push({ query: { q: `${manifest.key}` } });
+async function openManifest(manifest: KeyedModuleReplacement) {
+    if (manifest.value) {
+        searchValue.value = manifest.value.moduleName;
+        await navigateTo({ query: { q: manifest.key } });
+        // Remove focus from input
+        if (
+            document.activeElement &&
+            'blur' in document.activeElement &&
+            typeof document.activeElement.blur === 'function'
+        ) {
+            document.activeElement.blur();
+        }
+    }
 }
 
 function selectNext(element?: HTMLLIElement, offset = 1) {
@@ -136,14 +139,14 @@ function selectNext(element?: HTMLLIElement, offset = 1) {
 
 <style lang="scss" scoped>
 #searchbox {
-    @apply b-1 b-solid border-base color-base bg-secondary m-0 box-border w-full rounded-lg px-3 py-2 font-mono
+    @apply b-1 b-solid border-base color-base bg-base m-0 box-border w-full rounded-lg px-3 py-2 font-mono
             outline-color-primary:0 outline-solid transition-all-50 focus-visible:(outline-2 outline-primary:100) outline-0;
 }
 .overlay-wrapper {
     @apply relative;
 }
 #autocomplete-overlay {
-    @apply op0 bg-secondary z-overlay border-base b-1 b-solid invisible absolute left-0 right-0 top-10 rounded-lg transition-opacity h-72 of-y-scroll;
+    @apply op0 bg-base z-overlay border-base b-1 b-solid invisible absolute left-0 right-0 top-10 rounded-lg transition-opacity h-72 of-y-scroll;
 
     &.show {
         @apply op100 visible;
@@ -154,7 +157,7 @@ function selectNext(element?: HTMLLIElement, offset = 1) {
 
         &:focus-visible,
         &:hover {
-            @apply bg-primary/25;
+            @apply bg-active;
         }
     }
 }

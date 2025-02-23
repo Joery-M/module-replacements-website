@@ -14,3 +14,26 @@ body,
 #__nuxt {
     @apply color-base bg-base;
 }
+
+// MDC styling
+.MDC {
+    >h1:first-child {
+        @apply text-32px line-height-normal m-block-0.67em;
+    }
+
+    h2 {
+        @apply text-size-20px;
+    }
+
+    code.inline-code {
+        @apply bg-code py-0.5 px-1 rounded-md font-mono;
+
+        // text-sm but with em instead of rem
+        font-size: 0.875em;
+        line-height: 1.25em;
+    }
+
+    a:any-link {
+        @apply color-active transition-colors;
+    }
+}
