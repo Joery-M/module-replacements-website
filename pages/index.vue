@@ -6,18 +6,33 @@
     <div flex justify-center>
         <main max-w-screen-md w-full>
             <template
-                v-if="status !== 'pending' && data?.selectedModule"
+                v-if="status !== 'pending' && data?.module"
                 :aria-busy="status === 'pending'"
             >
-                <h1 v-if="!data.documentation">
-                    {{ data.selectedModule.moduleName }}
-                </h1>
-                <MDC
-                    v-if="data.documentation"
-                    :value="data.documentation"
-                    tag="article"
-                    class="MDC"
-                />
+                <template v-if="data.documentation">
+                    <MDC
+                        :value="data.documentation"
+                        tag="article"
+                        class="MDC"
+                    />
+                </template>
+                <template v-else-if="data.module.type === 'simple'">
+                    <h1>
+                        {{ data.module.moduleName }}
+                    </h1>
+                    <MDC
+                        :value="
+                            formatSimpleReplacement(data.module.replacement)
+                        "
+                        tag="article"
+                        class="MDC"
+                    />
+                </template>
+                <template v-else>
+                    <h1>
+                        {{ data.module.moduleName }}
+                    </h1>
+                </template>
             </template>
             <div v-else flex justify-center>
                 <div
@@ -43,14 +58,44 @@ const { data, status } = await useAsyncData(
                 ? await $fetch(`/api/module/doc/${mod.docPath}`)
                 : undefined;
 
-        return { selectedModule: mod, documentation };
+        return { module: mod, documentation };
     },
     { watch: [() => route.query.q] },
 );
 
 const routedModule = useState('prefilled-module-name', () => {
-    if (data.value?.selectedModule?.moduleName && import.meta.server) {
-        return data.value.selectedModule.moduleName;
+    if (data.value?.module?.moduleName && import.meta.server) {
+        return data.value.module.moduleName;
     }
 });
+
+function formatSimpleReplacement(doc: string) {
+    let newString = '';
+    let inCode = false;
+
+    for (let i = 0; i < doc.length; i++) {
+        const char = doc[i];
+        const rest = doc.slice(i);
+
+        if (/use $/i.test(newString) && !inCode) {
+            newString += '`';
+            inCode = true;
+        } else if (rest.startsWith(', or ') && inCode) {
+            newString += '`';
+            inCode = false;
+        } else if (rest.startsWith(' or ') && inCode) {
+            // Edge case for simple-is-whitespace
+            newString += '` or `';
+            i += 3;
+            continue;
+        }
+        newString += char;
+
+        // Final char
+        if (rest.length === 1 && inCode) {
+            newString += '`';
+        }
+    }
+    return newString;
+}
 </script>

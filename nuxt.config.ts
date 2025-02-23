@@ -34,6 +34,8 @@ export default defineNuxtConfig({
             map: {
                 pre: 'CodeBlock',
                 code: 'Code',
+                a: 'Anchor',
+                script: 'ProseScript',
             },
         },
         highlight: {
