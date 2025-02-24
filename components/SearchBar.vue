@@ -1,6 +1,9 @@
 <template>
     <form role="search" @submit.prevent flex justify-center>
         <div ref="overlay-wrapper" class="overlay-wrapper" max-w-full w-96>
+            <label for="searchbox" absolute op-0 w-0 h-0>
+                Search for modules
+            </label>
             <input
                 id="searchbox"
                 v-model.trim="searchValue"

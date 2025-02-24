@@ -1,12 +1,13 @@
 <template>
     <div :class="$props.class" class="codeblock-wrapper">
-        <div class="copy" :class="{ copied: clipboard.copied.value }">
-            <button
-                @click="clipboard.copy(code)"
-                title="Copy Code"
-                i-ph-clipboard
-            />
-        </div>
+        <button
+            class="copy"
+            :class="{ copied: clipboard.copied.value }"
+            title="Copy Code"
+            @click="clipboard.copy(code)"
+        >
+            <span i-ph-clipboard></span>
+        </button>
         <pre class="codeblock"><slot /></pre>
     </div>
 </template>
@@ -46,29 +47,36 @@ const clipboard = useClipboard();
 .codeblock-wrapper {
     @apply relative;
     .copy {
-        @apply bg-tooltip op-0 absolute right-4 top-4 transition-opacity flex justify-center items-center rounded-md transition-colors;
-        button {
-            @apply text-xl m-1.5 cursor-pointer;
+        @apply absolute right-2 top-2 p-0 flex justify-center items-center
+            rounded-md border-none transition-all op-0 bg-tooltip outline-solid outline-color-primary outline-0;
+
+        > span {
+            @apply text-xl m-1.5 cursor-pointer bg-neutral-800 dark:bg-neutral-200;
         }
         &::after {
-            @apply absolute pointer-events-none left-50% top-52.5% translate--50% size-2.5 op-0 invisible transition i-ph-check-bold;
+            @apply color-active absolute pointer-events-none left-50% top-52.5% translate--50% size-2.5 op-0 invisible transition i-ph-check-bold;
             content: '';
         }
         &.copied {
-            @apply color-active;
+            > span {
+                @apply bg-primary-600 dark:bg-primary-400 op-100;
+            }
             &::after {
                 @apply op-100 visible;
             }
         }
+        &:focus-visible {
+            @apply op-100 outline-solid outline-2 outline-color-primary;
+        }
     }
 
-    &:hover .copy,
-    .copy:focus-visible {
+    &:hover .copy {
         @apply op-100;
     }
 
     pre {
-        @apply m-0 of-x-auto bg-code rounded-lg py-3.5 px-4 my-7 text-sm;
+        // Extra right padding for copy button
+        @apply m-0 of-x-auto bg-code rounded-lg py-3.5 pl-4 pr-12 my-7 text-sm;
     }
 }
 </style>
