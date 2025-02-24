@@ -12,8 +12,8 @@
             title="Module replacements GitHub repository"
             target="_blank"
             href="https://github.com/es-tooling/module-replacements"
-            color-base
-            hover:color-active
+            color-base!
+            hover:color-active!
             transition-colors
             size-7
             mr-5

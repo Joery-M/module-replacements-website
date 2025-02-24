@@ -33,7 +33,8 @@ body,
         line-height: 1.25em;
     }
 
-    a:any-link {
-        @apply color-active transition-colors;
-    }
+}
+
+a:any-link {
+    @apply color-active transition-colors;
 }
