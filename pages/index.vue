@@ -1,7 +1,7 @@
 <template>
     <header text-center bg-secondary py-10 b-b-base border-base b-b>
         <h1>Module Replacements</h1>
-        <SearchBar mt-20 :value="routedModule" />
+        <SearchBar mt-20 :value="data?.module?.moduleName ?? ''" />
     </header>
     <div flex justify-center>
         <main max-w-screen-md w-full>
@@ -62,12 +62,6 @@ const { data, status } = await useAsyncData(
     },
     { watch: [() => route.query.q] },
 );
-
-const routedModule = useState('prefilled-module-name', () => {
-    if (data.value?.module?.moduleName && import.meta.server) {
-        return data.value.module.moduleName;
-    }
-});
 
 function formatSimpleReplacement(doc: string) {
     let newString = '';

@@ -6,10 +6,13 @@
                 v-model.trim="searchValue"
                 role="searchbox"
                 type="text"
-                autocomplete="off"
                 aria-haspopup="listbox"
                 :aria-expanded="showDropdown"
                 aria-controls="autocomplete-overlay"
+                autocapitalize="none"
+                autocomplete="off"
+                spellcheck="false"
+                autocorrect="false"
                 @keydown.enter="
                     searchResults.length > 0 && openManifest(searchResults[0])
                 "
@@ -33,6 +36,7 @@
                 }}
             </p>
             <div
+                ref="overlay-scroll-box"
                 id="autocomplete-overlay"
                 :class="{ show: showDropdown }"
                 tabindex="-1"
@@ -77,6 +81,7 @@ const props = defineProps<{
 }>();
 
 const overlayWrapper = useTemplateRef('overlay-wrapper');
+const overlayScrollBox = useTemplateRef('overlay-scroll-box');
 const wrapperFocus = useFocusWithin(overlayWrapper);
 
 const searchValue = ref('');
@@ -103,6 +108,15 @@ const showDropdown = computed(
 const listItems = shallowReactive(
     new Map<KeyedModuleReplacement, HTMLLIElement>(),
 );
+
+onMounted(() => {
+    watch(searchResults, (val) => {
+        if (val[0] && overlayScrollBox.value) {
+            // Scroll up
+            overlayScrollBox.value.scrollTop = 0;
+        }
+    });
+});
 
 async function openManifest(manifest: KeyedModuleReplacement) {
     if (manifest.value) {
