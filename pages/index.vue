@@ -113,6 +113,14 @@ function formatSimpleReplacement(doc: string) {
     return newString;
 }
 
+useSeoMeta({
+    title: computed(() =>
+        data.value?.module?.moduleName
+            ? `${data.value?.module?.moduleName} - Module Replacements`
+            : `Module Replacements`,
+    ),
+});
+
 function formatNativeDoc(mod: NativeModuleReplacement) {
     return `# ${mod.moduleName}
 A native replacement is available for \`${mod.moduleName}\`:

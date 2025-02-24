@@ -6,6 +6,7 @@
         flex
         items-center
     >
+        <img src="/icon.svg" size-7 ml-5 alt="Module Replacements logo" />
         <div flex-grow></div>
         <a
             aria-label="Module replacements GitHub repository"
