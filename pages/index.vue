@@ -77,7 +77,7 @@ function formatSimpleReplacement(doc: string) {
         const char = doc[i];
         const rest = doc.slice(i);
 
-        if (/use $/i.test(newString) && !inCode) {
+        if (newString.toLowerCase().endsWith('use ') && !inCode) {
             newString += '`';
             inCode = true;
         } else if (rest.startsWith(', or ') && inCode) {
