@@ -14,9 +14,9 @@
                 v-if="status !== 'pending' && data?.module"
                 :aria-busy="status === 'pending'"
             >
-                <template v-if="data.documentation">
+                <template v-if="data.module.type === 'documented'">
                     <MDC
-                        :value="data.documentation"
+                        :value="data.documentation ?? ''"
                         tag="article"
                         class="MDC"
                     />
@@ -33,10 +33,23 @@
                         class="MDC"
                     />
                 </template>
+                <template v-else-if="data.module.type === 'native'">
+                    <MDC
+                        :value="formatNativeDoc(data.module)"
+                        tag="article"
+                        class="MDC"
+                    />
+                </template>
                 <template v-else>
                     <h1>
                         {{ data.module.moduleName }}
                     </h1>
+                    <p>
+                        Gonna be honest, idk how you got here.
+                        <a href="https://bsky.app/profile/joery.com">
+                            Please tell me on BlueSky!
+                        </a>
+                    </p>
                 </template>
             </template>
             <div v-else flex justify-center>
@@ -52,6 +65,8 @@
 </template>
 
 <script setup lang="ts">
+import type { NativeModuleReplacement } from '~/types/module-manifests';
+
 const route = useRoute();
 
 const { data, status } = await useAsyncData(
@@ -96,5 +111,36 @@ function formatSimpleReplacement(doc: string) {
         }
     }
     return newString;
+}
+
+function formatNativeDoc(mod: NativeModuleReplacement) {
+    return `# ${mod.moduleName}
+A native replacement is available for \`${mod.moduleName}\`:
+
+\`\`\`js
+${mod.replacement}
+\`\`\`
+
+[MDN Web Docs](${formatMDNUrl(mod)})
+[Caniuse entry](${formatCaniuseUrl(mod)})
+`;
+}
+
+function formatMDNUrl(mod: NativeModuleReplacement) {
+    // Prevent XSS
+    const path = mod.mdnPath.replaceAll(')', '\\)');
+
+    return (
+        'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/' +
+        path
+    );
+}
+function formatCaniuseUrl(mod: NativeModuleReplacement) {
+    return (
+        'https://caniuse.com/?search=' +
+        encodeURIComponent(
+            'builtin: ' + mod.replacement.replace('.prototype.', '.'),
+        )
+    );
 }
 </script>
