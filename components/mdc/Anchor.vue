@@ -27,9 +27,3 @@ const props = defineProps({
     },
 });
 </script>
-
-<style lang="scss">
-a:has(+ a) {
-    margin-right: 0.5em;
-}
-</style>

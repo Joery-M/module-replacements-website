@@ -39,8 +39,15 @@ export default defineNuxtConfig({
             },
         },
         highlight: {
-            langs: ['js', 'ts'],
+            langs: ['js', 'ts', 'bash'],
             themes: ['vitesse-light', 'vitesse-dark'],
+        },
+        rehypePlugins: {
+            // Solves a tiny issue where anchor tags are squished together
+            format: {
+                src: import.meta.resolve('rehype-format'),
+                options: {},
+            },
         },
     },
     colorMode: {
