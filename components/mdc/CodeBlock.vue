@@ -48,7 +48,8 @@ const clipboard = useClipboard();
     @apply relative;
     .copy {
         @apply absolute right-2 top-2 p-0 flex justify-center items-center
-            rounded-md border-none transition-all op-0 bg-tooltip outline-solid outline-color-primary outline-0;
+            rounded-md border-none transition-all op-0 bg-tooltip outline-solid outline-color-primary outline-0
+            contrast:(b-solid b-1 light:b-neutral-7 dark:b-neutral-3);
 
         > span {
             @apply text-xl m-1.5 cursor-pointer bg-neutral-800 dark:bg-neutral-200;
@@ -76,7 +77,8 @@ const clipboard = useClipboard();
 
     pre {
         // Extra right padding for copy button
-        @apply m-0 of-x-auto bg-code rounded-lg py-3.5 pl-4 pr-12 my-7 text-sm;
+        // Have to manually add border colors
+        @apply m-0 of-x-auto bg-code rounded-lg py-3.5 pl-4 pr-12 my-7 text-sm contrast:(b-solid b-1 light:b-neutral-7 dark:b-neutral-3);
     }
 }
 </style>

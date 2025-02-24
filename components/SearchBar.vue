@@ -157,7 +157,7 @@ function selectNext(element?: HTMLLIElement, offset = 1) {
 <style lang="scss" scoped>
 #searchbox {
     @apply b-1 b-solid border-base color-base bg-base m-0 box-border w-full rounded-lg px-3 py-2 font-mono
-            outline-color-primary:0 outline-solid transition-all-50 focus-visible:(outline-2 outline-primary:100) outline-0;
+            outline-color-primary:0 outline-solid transition-all-50 focus-visible:(outline-2 outline-primary:100 contrast:outline-transparent) outline-0;
 }
 .overlay-wrapper {
     @apply relative;
@@ -174,7 +174,7 @@ function selectNext(element?: HTMLLIElement, offset = 1) {
 
         &:focus-visible,
         &:hover {
-            @apply bg-active;
+            @apply bg-active contrast:(bg-dark color-neutral-2 dark:color-neutral-8);
         }
     }
 }

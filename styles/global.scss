@@ -26,7 +26,8 @@ body,
     }
 
     code.inline-code {
-        @apply bg-code py-0.5 px-1 rounded-md font-mono;
+        // Have to manually add border colors
+        @apply bg-code py-0.5 px-1 rounded-md font-mono contrast:(border-solid border-1 light:b-neutral-7 dark:b-neutral-3);
 
         // text-sm but with em instead of rem
         font-size: 0.875em;

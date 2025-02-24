@@ -1,5 +1,10 @@
 <template>
-    <header text-center bg-secondary py-10 b-b-base border-base b-b>
+    <header
+        text-center
+        bg-secondary
+        py-10
+        class="contrast:(b-solid b-0 b-b light:b-neutral-7 dark:b-neutral-3)"
+    >
         <h1>Module Replacements</h1>
         <SearchBar mt-20 :value="data?.module?.moduleName ?? ''" />
     </header>
