@@ -9,6 +9,7 @@
                 v-model.trim="searchValue"
                 role="searchbox"
                 type="text"
+                placeholder="Type here to search"
                 aria-haspopup="listbox"
                 :aria-expanded="searchResults.length > 0"
                 aria-controls="autocomplete-overlay"

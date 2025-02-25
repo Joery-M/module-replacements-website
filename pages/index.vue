@@ -10,11 +10,16 @@
         <SearchBar mt-20 :value="data?.module?.moduleName ?? ''" />
     </header>
     <div flex justify-center>
-        <main max-w-prose m-5 w-full>
-            <template
-                v-if="status !== 'pending' && data?.module"
-                :aria-busy="status === 'pending'"
-            >
+        <main max-w-prose m-5 w-full :aria-busy="status === 'pending'">
+            <div v-if="status === 'pending'" flex justify-center>
+                <div
+                    text-3xl
+                    mt-10
+                    aria-details="Loading..."
+                    class="i-ph-circle-notch animate-spin"
+                />
+            </div>
+            <template v-else-if="data?.module">
                 <template v-if="data.module.type === 'documented'">
                     <MDC
                         :value="data.documentation ?? ''"
@@ -53,14 +58,6 @@
                     </p>
                 </template>
             </template>
-            <div v-else flex justify-center>
-                <div
-                    text-3xl
-                    mt-10
-                    aria-details="Loading..."
-                    class="i-ph-circle-notch animate-spin"
-                />
-            </div>
         </main>
     </div>
 </template>

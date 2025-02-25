@@ -1,5 +1,4 @@
 import * as v from 'valibot';
-import type { ModuleReplacement } from '~/types/module-manifests';
 
 const validation = v.object({
     doc: v.pipe(v.string(), v.minLength(1)),
