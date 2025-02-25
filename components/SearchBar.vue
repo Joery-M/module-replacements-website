@@ -1,6 +1,6 @@
 <template>
     <form role="search" @submit.prevent flex justify-center>
-        <div ref="overlay-wrapper" class="overlay-wrapper" max-w-full w-96>
+        <div class="overlay-wrapper" max-w-full w-96>
             <label for="searchbox" absolute op-0 w-0 h-0>
                 Search for modules
             </label>
@@ -10,7 +10,7 @@
                 role="searchbox"
                 type="text"
                 aria-haspopup="listbox"
-                :aria-expanded="showDropdown"
+                :aria-expanded="searchResults.length > 0"
                 aria-controls="autocomplete-overlay"
                 autocapitalize="none"
                 autocomplete="off"
@@ -41,7 +41,7 @@
             <div
                 ref="overlay-scroll-box"
                 id="autocomplete-overlay"
-                :class="{ show: showDropdown }"
+                :class="{ show: searchResults.length > 0 }"
                 tabindex="-1"
             >
                 <ul m-0 p-0 list-none text-left>
@@ -83,9 +83,7 @@ const props = defineProps<{
     value?: string;
 }>();
 
-const overlayWrapper = useTemplateRef('overlay-wrapper');
 const overlayScrollBox = useTemplateRef('overlay-scroll-box');
-const wrapperFocus = useFocusWithin(overlayWrapper);
 
 const searchValue = ref('');
 const searchDebounced = useDebounce(searchValue, 500);
@@ -102,10 +100,6 @@ watchImmediate(
             searchValue.value = val;
         }
     },
-);
-
-const showDropdown = computed(
-    () => wrapperFocus.focused.value && searchResults.value.length > 0,
 );
 
 const listItems = shallowReactive(
@@ -161,13 +155,15 @@ function selectNext(element?: HTMLLIElement, offset = 1) {
 }
 .overlay-wrapper {
     @apply relative;
+
+    &:focus-within {
+        #autocomplete-overlay.show {
+            @apply op100 visible;
+        }
+    }
 }
 #autocomplete-overlay {
     @apply op0 bg-base z-overlay border-base b-1 b-solid invisible absolute left-0 right-0 top-10 rounded-lg transition-opacity h-72 of-y-scroll;
-
-    &.show {
-        @apply op100 visible;
-    }
 
     li[role='option'] {
         @apply cursor-pointer transition-100 outline-none;
