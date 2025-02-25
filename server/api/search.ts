@@ -24,15 +24,15 @@ export default eventHandler(async (event) => {
         keys: ReadonlyArray<string>;
         records: FuseIndexRecords;
     }>('fuse');
-    const prefix = 'replacement-manifest:';
     const storage = useStorage<ModuleReplacement>('replacement-manifest');
 
     const [index, keys] = await Promise.all([
         fuseStorage.getItem('replacements'),
-        storage.getKeys(),
+        useStorage().getKeys('replacement-manifest'),
     ]);
-    const arr = (await storage.getItems(keys.map((key) => prefix + key)))
-        .map(({ key, value }) => ({ key: key.slice(prefix.length), value }))
+
+    const arr = (await storage.getItems(keys))
+        .map(({ key, value }) => ({ key: key, value }))
         .sort((a, b) =>
             a.key.localeCompare(b.key, undefined, { sensitivity: 'base' }),
         );

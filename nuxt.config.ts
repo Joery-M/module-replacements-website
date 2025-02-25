@@ -23,15 +23,18 @@ export default defineNuxtConfig({
         storage: {
             'replacement-manifest': {
                 driver: 'cloudflare-kv-binding',
-                binding: 'replacement-manifest',
+                base: 'replacement-manifest',
+                binding: 'default',
             },
             'replacement-docs': {
                 driver: 'cloudflare-kv-binding',
-                binding: 'replacement-docs',
+                base: 'replacement-docs',
+                binding: 'default',
             },
             fuse: {
                 driver: 'cloudflare-kv-binding',
-                binding: 'fuse',
+                base: 'fuse',
+                binding: 'default',
             },
         },
         scheduledTasks: {
