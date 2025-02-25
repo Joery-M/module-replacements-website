@@ -3,10 +3,11 @@ import { defineNuxtConfig } from 'nuxt/config';
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
     modules: [
+        '@nuxtjs/color-mode',
+        '@nuxtjs/mdc',
         '@unocss/nuxt',
         '@vueuse/nuxt',
-        '@nuxtjs/mdc',
-        '@nuxtjs/color-mode',
+        'nitro-cloudflare-dev',
     ],
     devtools: {
         enabled: true,
@@ -14,13 +15,24 @@ export default defineNuxtConfig({
     compatibilityDate: '2024-11-01',
 
     nitro: {
+        preset: 'cloudflare',
+        plugins: ['plugins/run-task.ts'],
         experimental: {
             tasks: true,
         },
         storage: {
-            'replacement-manifest': { driver: 'fs-lite', base: './data/db' },
-            'replacement-docs': { driver: 'fs-lite', base: './data/docs' },
-            fuse: { driver: 'fs-lite', base: './data/fuse' },
+            'replacement-manifest': {
+                driver: 'cloudflare-kv-binding',
+                binding: 'replacement-manifest',
+            },
+            'replacement-docs': {
+                driver: 'cloudflare-kv-binding',
+                binding: 'replacement-docs',
+            },
+            fuse: {
+                driver: 'cloudflare-kv-binding',
+                binding: 'fuse',
+            },
         },
         scheduledTasks: {
             // Run `fetch-manifests` every hour
@@ -41,6 +53,8 @@ export default defineNuxtConfig({
         highlight: {
             langs: ['js', 'ts', 'bash'],
             themes: ['vitesse-light', 'vitesse-dark'],
+            // Forced by cloudflare
+            shikiEngine: 'javascript',
         },
         rehypePlugins: {
             // Solves a tiny issue where anchor tags are squished together

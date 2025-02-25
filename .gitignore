@@ -23,4 +23,5 @@ logs
 .env.*
 !.env.example
 
-data
+# Cloudflare data
+.wrangler

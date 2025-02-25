@@ -1,0 +1,19 @@
+name = "module-replacements"
+compatibility_date = "2025-02-14"
+main = "./.output/server/index.mjs"
+assets = { directory = "./.output/public/", binding = "ASSETS" }
+
+[[kv_namespaces]]
+binding = "replacement-manifest"
+id = "replacement_manifest_default"
+
+[[kv_namespaces]]
+binding = "replacement-docs"
+id = "replacement_docs_default"
+
+[[kv_namespaces]]
+binding = "fuse"
+id = "fuse_default"
+
+[triggers]
+crons = ["0 * * * *"]
