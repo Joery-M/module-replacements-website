@@ -1,7 +1,7 @@
 html,
 body,
 #__nuxt {
-    height: 100vh;
+    min-height: 100dvh;
     margin: 0;
     padding: 0;
 }
@@ -41,6 +41,6 @@ a {
     }
 
     &:any-link {
-        @apply color-active transition-colors;
+        @apply color-active;
     }
 }

@@ -1,15 +1,16 @@
+import { readFile } from 'fs/promises';
 import {
     defineConfig,
-    presetUno,
-    presetIcons,
+    escapeRegExp,
     presetAttributify,
+    presetIcons,
+    presetUno,
     presetWebFonts,
     transformerDirectives,
     transformerVariantGroup,
-    parseVariantGroup,
-    escapeRegExp,
     type VariantObject,
 } from 'unocss';
+import { fileURLToPath } from 'url';
 
 function variantParentMatcher<T extends object = object>(
     name: string,
@@ -40,6 +41,12 @@ function variantParentMatcher<T extends object = object>(
     };
 }
 
+function loadSVG(path: string) {
+    return readFile(fileURLToPath(import.meta.resolve(path)), {
+        encoding: 'utf-8',
+    });
+}
+
 export default defineConfig({
     shortcuts: [
         {
@@ -53,7 +60,7 @@ export default defineConfig({
             'bg-code': 'bg-gray5:15',
 
             'color-active':
-                'color-primary-600 contrast:color-amber-700 dark:color-primary-400',
+                'color-primary-600 contrast:color-amber-700 dark:color-primary-500',
             'border-active': 'border-primary-600/25 dark:border-primary-400/25',
             'bg-active': 'bg-#8884',
 
@@ -100,7 +107,14 @@ export default defineConfig({
     },
     presets: [
         presetUno(),
-        presetIcons(),
+        presetIcons({
+            collections: {
+                local: {
+                    logo: () => loadSVG('./assets/icon.svg'),
+                    bluesky: () => loadSVG('./assets/bluesky-icon.svg'),
+                },
+            },
+        }),
         presetAttributify(),
         presetWebFonts({
             fonts: {
