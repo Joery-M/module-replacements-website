@@ -7,7 +7,6 @@ export default defineNuxtConfig({
         '@nuxtjs/mdc',
         '@unocss/nuxt',
         '@vueuse/nuxt',
-        'nitro-cloudflare-dev',
     ],
     devtools: {
         enabled: true,
@@ -15,26 +14,21 @@ export default defineNuxtConfig({
     compatibilityDate: '2024-11-01',
 
     nitro: {
-        preset: 'cloudflare',
-        plugins: ['plugins/run-task.ts'],
+        preset: 'node',
         experimental: {
             tasks: true,
         },
         storage: {
             'replacement-manifest': {
-                driver: 'cloudflare-kv-binding',
-                base: 'replacement-manifest',
-                binding: 'default',
+                driver: 'fs-lite',
+                base: './.data/replacement-manifest',
             },
             'replacement-docs': {
-                driver: 'cloudflare-kv-binding',
-                base: 'replacement-docs',
-                binding: 'default',
+                driver: 'fs-lite',
+                base: './.data/replacement-docs',
             },
             fuse: {
-                driver: 'cloudflare-kv-binding',
-                base: 'fuse',
-                binding: 'default',
+                driver: 'memory',
             },
         },
         scheduledTasks: {
@@ -56,8 +50,6 @@ export default defineNuxtConfig({
         highlight: {
             langs: ['js', 'ts', 'bash'],
             themes: ['vitesse-light', 'vitesse-dark'],
-            // Forced by cloudflare
-            shikiEngine: 'javascript',
         },
         rehypePlugins: {
             // Solves a tiny issue where anchor tags are squished together

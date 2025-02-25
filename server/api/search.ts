@@ -24,15 +24,16 @@ export default eventHandler(async (event) => {
         keys: ReadonlyArray<string>;
         records: FuseIndexRecords;
     }>('fuse');
-    const storage = useStorage<ModuleReplacement>('replacement-manifest');
+    const prefix = 'replacement-manifest';
+    const storage = useStorage<ModuleReplacement>(prefix);
 
     const [index, keys] = await Promise.all([
         fuseStorage.getItem('replacements'),
-        useStorage().getKeys('replacement-manifest'),
+        useStorage().getKeys(prefix),
     ]);
 
     const arr = (await storage.getItems(keys))
-        .map(({ key, value }) => ({ key: key, value }))
+        .map(({ key, value }) => ({ key: key.slice(prefix.length + 1), value }))
         .sort((a, b) =>
             a.key.localeCompare(b.key, undefined, { sensitivity: 'base' }),
         );
@@ -42,5 +43,10 @@ export default eventHandler(async (event) => {
         FUSE_SETTINGS,
         index ? Fuse.parseIndex(index) : undefined,
     );
+    // Store index
+    if (!index) {
+        console.log('Fill fuse');
+        fuseStorage.setItem('replacements', fuse.getIndex().toJSON());
+    }
     return fuse.search(q, { limit: 50 }).map(({ item }) => item);
 });
