@@ -3,13 +3,14 @@
         text-center
         bg-secondary
         py-10
+        px-5
         class="contrast:(b-solid b-0 b-b light:b-neutral-7 dark:b-neutral-3)"
     >
         <h1>Module Replacements</h1>
         <SearchBar mt-20 :value="data?.module?.moduleName ?? ''" />
     </header>
     <div flex justify-center>
-        <main max-w-screen-md w-full>
+        <main max-w-prose m-5 w-full>
             <template
                 v-if="status !== 'pending' && data?.module"
                 :aria-busy="status === 'pending'"
