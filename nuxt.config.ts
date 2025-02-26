@@ -61,4 +61,10 @@ export default defineNuxtConfig({
     colorMode: {
         classSuffix: '',
     },
+
+    vite: {
+        build: {
+            cssCodeSplit: false,
+        },
+    },
 });
