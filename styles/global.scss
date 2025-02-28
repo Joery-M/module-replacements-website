@@ -44,3 +44,29 @@ a {
         @apply color-active;
     }
 }
+
+table {
+    @apply border-spacing-0 border-collapse of-auto;
+    width: max-content;
+    max-width: 100%;
+
+
+    td,
+    th {
+        @apply px-2 py-1 b-solid border-base b-1;
+
+    }
+
+    tr:nth-child(2n) {
+        @apply bg-secondary:70;
+    }
+
+    &,
+    tr,
+    td,
+    th,
+    thead,
+    tbody {
+        box-sizing: border-box;
+    }
+}

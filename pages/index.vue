@@ -10,7 +10,7 @@
         <SearchBar mt-20 :value="data?.module?.moduleName ?? ''" />
     </header>
     <div flex justify-center>
-        <main max-w-prose m-5 w-full :aria-busy="status === 'pending'">
+        <main :aria-busy="status === 'pending'">
             <div v-if="status === 'pending'" flex justify-center>
                 <div
                     text-3xl
@@ -150,3 +150,21 @@ function formatCaniuseUrl(mod: NativeModuleReplacement) {
     );
 }
 </script>
+
+<style lang="scss">
+main {
+    @apply w-full;
+
+    > *:not(.MDC) {
+        @apply max-w-670px mx-auto;
+    }
+
+    > .MDC {
+        @apply max-w-4xl mx-auto;
+
+        > :not(table) {
+            @apply max-w-670px mx-auto;
+        }
+    }
+}
+</style>

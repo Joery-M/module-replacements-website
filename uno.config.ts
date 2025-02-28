@@ -80,6 +80,10 @@ export default defineConfig({
             'z-header': 'z-50',
             'z-header-overlay': 'z-60',
         },
+        [
+            /^bg-secondary(\:[0-9]+)?$/,
+            ([, perc = '']) => `bg-neutral-200${perc} dark:bg-#222${perc}`,
+        ],
     ],
     variants: [
         variantParentMatcher('contrast', '@media (prefers-contrast: more)'),
