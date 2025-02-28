@@ -142,12 +142,13 @@ function formatMDNUrl(mod: NativeModuleReplacement) {
     );
 }
 function formatCaniuseUrl(mod: NativeModuleReplacement) {
-    return (
-        'https://caniuse.com/?search=' +
-        encodeURIComponent(
-            'builtin: ' + mod.replacement.replace('.prototype.', '.'),
-        )
-    );
+    let query = mod.mdnPath;
+    if (query.startsWith('Global_Objects/')) {
+        query = query.slice(15);
+    }
+    query = query.replaceAll('/', ' ');
+
+    return 'https://caniuse.com/?search=' + encodeURIComponent(query);
 }
 </script>
 
