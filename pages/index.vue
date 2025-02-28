@@ -81,6 +81,14 @@ const { data, status } = await useAsyncData(
     { watch: [() => route.query.q] },
 );
 
+useSeoMeta({
+    title: computed(() =>
+        data.value?.module?.moduleName
+            ? `${data.value?.module?.moduleName} - Module Replacements`
+            : `Module Replacements`,
+    ),
+});
+
 function formatSimpleReplacement(doc: string) {
     let newString = '';
     let inCode = false;
@@ -111,14 +119,6 @@ function formatSimpleReplacement(doc: string) {
     return newString;
 }
 
-useSeoMeta({
-    title: computed(() =>
-        data.value?.module?.moduleName
-            ? `${data.value?.module?.moduleName} - Module Replacements`
-            : `Module Replacements`,
-    ),
-});
-
 function formatNativeDoc(mod: NativeModuleReplacement) {
     return `# ${mod.moduleName}
 A native replacement is available for \`${mod.moduleName}\`:
@@ -129,6 +129,7 @@ ${mod.replacement}
 
 [MDN Web Docs](${formatMDNUrl(mod)})
 [Caniuse entry](${formatCaniuseUrl(mod)})
+[npmgraph](${formatNpmgraphUrl(mod)})
 `;
 }
 
@@ -136,10 +137,7 @@ function formatMDNUrl(mod: NativeModuleReplacement) {
     // Prevent XSS
     const path = mod.mdnPath.replaceAll(')', '\\)');
 
-    return (
-        'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/' +
-        path
-    );
+    return `https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/${path}`;
 }
 function formatCaniuseUrl(mod: NativeModuleReplacement) {
     let query = mod.mdnPath;
@@ -148,7 +146,10 @@ function formatCaniuseUrl(mod: NativeModuleReplacement) {
     }
     query = query.replaceAll('/', ' ');
 
-    return 'https://caniuse.com/?search=' + encodeURIComponent(query);
+    return `https://caniuse.com/?search=${encodeURIComponent(query)}`;
+}
+function formatNpmgraphUrl(mod: NativeModuleReplacement) {
+    return `https://npmgraph.js.org/?q=${encodeURIComponent(mod.moduleName)}`;
 }
 </script>
 
