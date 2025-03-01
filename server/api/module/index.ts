@@ -6,7 +6,7 @@ const validation = v.object({
 });
 
 export default defineCachedEventHandler(async (event) => {
-    const { module: id } = await getValidatedRouterParams(event, (q) =>
+    const { module: id } = await getValidatedQuery(event, (q) =>
         v.parse(validation, q),
     );
 

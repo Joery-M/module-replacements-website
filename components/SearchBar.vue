@@ -119,7 +119,8 @@ onMounted(() => {
 async function openManifest(manifest: KeyedModuleReplacement) {
     if (manifest.value) {
         searchValue.value = manifest.value.moduleName;
-        await navigateTo({ query: { q: manifest.key } });
+        await navigateTo({ params: { module: manifest.key } });
+
         // Remove focus from input
         if (
             document.activeElement &&

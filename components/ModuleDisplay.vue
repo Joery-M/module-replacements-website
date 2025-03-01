@@ -1,53 +1,41 @@
 <template>
-    <div v-if="loadingStatus === 'pending'" flex justify-center>
-        <div
-            text-3xl
-            mt-10
-            aria-details="Loading..."
-            class="i-ph-circle-notch animate-spin"
+    <template v-if="manifest.type === 'documented'">
+        <MDC :value="documentation ?? ''" tag="article" class="MDC" />
+    </template>
+    <template v-else-if="manifest.type === 'simple'">
+        <h1>
+            {{ manifest.moduleName }}
+        </h1>
+        <MDC
+            :value="formatSimpleReplacement(manifest.replacement)"
+            tag="article"
+            class="MDC"
         />
-    </div>
-    <template v-else-if="manifest">
-        <template v-if="manifest.type === 'documented'">
-            <MDC :value="documentation ?? ''" tag="article" class="MDC" />
-        </template>
-        <template v-else-if="manifest.type === 'simple'">
-            <h1>
-                {{ manifest.moduleName }}
-            </h1>
-            <MDC
-                :value="formatSimpleReplacement(manifest.replacement)"
-                tag="article"
-                class="MDC"
-            />
-        </template>
-        <template v-else-if="manifest.type === 'native'">
-            <MDC :value="formatNativeDoc(manifest)" tag="article" class="MDC" />
-        </template>
-        <template v-else>
-            <h1>
-                {{ manifest.moduleName }}
-            </h1>
-            <p>
-                Gonna be honest, idk how you got here.
-                <a href="https://bsky.app/profile/joery.com">
-                    Please tell me on BlueSky!
-                </a>
-            </p>
-        </template>
+    </template>
+    <template v-else-if="manifest.type === 'native'">
+        <MDC :value="formatNativeDoc(manifest)" tag="article" class="MDC" />
+    </template>
+    <template v-else>
+        <h1>
+            {{ manifest.moduleName }}
+        </h1>
+        <p>
+            Gonna be honest, idk how you got here.
+            <a href="https://bsky.app/profile/joery.com">
+                Please tell me on BlueSky!
+            </a>
+        </p>
     </template>
 </template>
 
 <script setup lang="ts">
-import type { AsyncDataRequestStatus } from '#app';
 import type {
     ModuleReplacement,
     NativeModuleReplacement,
 } from '~/types/module-manifests';
 
 defineProps<{
-    loadingStatus?: AsyncDataRequestStatus;
-    manifest?: ModuleReplacement | null;
+    manifest: ModuleReplacement;
     documentation?: string | null;
 }>();
 

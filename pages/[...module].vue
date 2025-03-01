@@ -1,20 +1,34 @@
 <template>
-    <header
-        text-center
-        bg-secondary
-        py-10
-        px-5
-        class="contrast:(b-solid b-0 b-b light:b-neutral-7 dark:b-neutral-3)"
-    >
-        <h1>Module Replacements</h1>
-        <SearchBar mt-20 :query="data?.manifest?.moduleName" />
-    </header>
-    <div flex justify-center>
-        <main :aria-busy="status === 'pending'">
+    <div min-h-100dvh>
+        <header
+            text-center
+            bg-secondary
+            py-10
+            px-5
+            class="contrast:(b-solid b-0 b-b light:b-neutral-7 dark:b-neutral-3)"
+        >
+            <h1>Module Replacements</h1>
+            <SearchBar mt-20 :query="data?.manifest?.moduleName" />
+        </header>
+
+        <!-- Allow mismatch since the loading spinner was giving problems -->
+        <main
+            pb-36
+            :aria-busy="status === 'pending'"
+            data-allow-mismatch="children"
+        >
+            <div v-if="status === 'pending'" flex justify-center>
+                <div
+                    text-3xl
+                    mt-10
+                    aria-details="Loading..."
+                    class="i-ph-circle-notch animate-spin"
+                />
+            </div>
             <ModuleDisplay
-                :loading-status="status"
-                :documentation="data?.documentation"
-                :manifest="data?.manifest"
+                v-else-if="data?.manifest"
+                :documentation="data.documentation"
+                :manifest="data.manifest"
             />
         </main>
     </div>
@@ -48,25 +62,29 @@ const { data, status } = await useAsyncData(
 
 useSeoMeta({
     title: () =>
-        data.value?.manifest?.moduleName
+        data.value?.manifest
             ? `${data.value?.manifest?.moduleName} - Module Replacements`
             : `Module Replacements`,
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 main {
     @apply w-full;
 
-    > *:not(.MDC) {
+    :deep(> *:not(.MDC)) {
         @apply max-w-670px mx-auto;
     }
 
-    > .MDC {
-        @apply max-w-4xl mx-auto;
+    :deep(> .MDC) {
+        @apply max-w-4xl mx-auto px-5;
 
-        > :not(table) {
+        > :not(.table-wrapper) {
             @apply max-w-670px mx-auto;
+        }
+
+        > .table-wrapper {
+            @apply of-x-auto outline-1 outline-solid outline-offset--1 outline-base border-collapse;
         }
     }
 }
