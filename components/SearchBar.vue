@@ -81,27 +81,27 @@
 import type { KeyedModuleReplacement } from '~/types/module-manifests';
 
 const props = defineProps<{
-    value?: string;
+    query?: string;
 }>();
 
 const overlayScrollBox = useTemplateRef('overlay-scroll-box');
 
-const searchValue = ref('');
+const searchValue = ref(props.query ?? '');
 const searchDebounced = useDebounce(searchValue, 500);
 const { data: searchResults } = useFetch('/api/search', {
     deep: false,
-    query: computed(() => ({ q: searchDebounced.value })),
+    lazy: true,
+    query: computed(() => ({
+        q: searchDebounced.value,
+    })),
     default: () => [],
 });
 
-watchImmediate(
-    () => props.value,
-    (val) => {
-        if (val) {
-            searchValue.value = val;
-        }
-    },
-);
+watchEffect(() => {
+    if (props.query) {
+        searchValue.value = props.query;
+    }
+});
 
 const listItems = shallowReactive(
     new Map<KeyedModuleReplacement, HTMLLIElement>(),
@@ -119,7 +119,8 @@ onMounted(() => {
 async function openManifest(manifest: KeyedModuleReplacement) {
     if (manifest.value) {
         searchValue.value = manifest.value.moduleName;
-        await navigateTo({ query: { q: manifest.key } });
+        await navigateTo({ params: { module: manifest.key } });
+
         // Remove focus from input
         if (
             document.activeElement &&
