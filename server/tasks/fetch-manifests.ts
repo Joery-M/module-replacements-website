@@ -46,15 +46,14 @@ export default defineTask({
                     );
                 });
                 if (res?.status === 200) {
-                    const data = (await res.json()) as GithubMarkdownFile;
-                    await docStorage.setItem(docPath, data.file.contents);
+                    await docStorage.setItem(docPath, await res.text());
                 }
             },
         );
 
         const promises = MANIFEST_URLS.map(async (manifestUrl) => {
             const json = await fetch(manifestUrl)
-                .then((r) => r.json() as Promise<GithubJsonFile>)
+                .then((r) => r.json() as Promise<ManifestModule>)
                 .catch((res) => {
                     console.error(
                         'Error fetching manifest: ' + manifestUrl,
@@ -62,9 +61,7 @@ export default defineTask({
                     );
                 });
 
-            if (!json) return [];
-            return (JSON.parse(json.file.contents) as ManifestModule)
-                .moduleReplacements;
+            return json?.moduleReplacements ?? [];
         });
 
         const promiseResult = (await Promise.all(promises)).flat(1);
