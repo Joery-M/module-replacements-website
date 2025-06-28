@@ -32,11 +32,11 @@ export default eventHandler(async (event) => {
         useStorage().getKeys(prefix),
     ]);
 
-    const arr = (await storage.getItems(keys))
-        .map(({ key, value }) => ({ key: key.slice(prefix.length + 1), value }))
-        .sort((a, b) =>
-            a.key.localeCompare(b.key, undefined, { sensitivity: 'base' }),
-        );
+    const arr = (
+        await storage.getItems(keys.map((key) => key.slice(prefix.length + 1)))
+    ).sort((a, b) =>
+        a.key.localeCompare(b.key, undefined, { sensitivity: 'base' }),
+    );
 
     const fuse = new Fuse(
         arr,

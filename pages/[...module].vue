@@ -37,28 +37,17 @@
 <script setup lang="ts">
 import { fetchManifest } from '~/stores/manifest';
 
-const route = useRoute();
-
-const { data, status } = await useAsyncData(
-    `documentation`,
-    async () => {
-        if (route.query.q) {
-            return await fetchManifest(
-                Array.isArray(route.query.q)
-                    ? route.query.q.join('')
-                    : route.query.q,
-            );
-        } else if (route.params.module) {
-            return await fetchManifest(
-                Array.isArray(route.params.module)
-                    ? route.params.module.join('')
-                    : route.params.module,
-            );
-        }
-        return null;
-    },
-    { watch: [() => route.query.q] },
-);
+const { data, status } = await useAsyncData(`documentation`, async () => {
+    const route = useRoute();
+    if (route.params.module) {
+        return await fetchManifest(
+            Array.isArray(route.params.module)
+                ? route.params.module.join('')
+                : route.params.module,
+        );
+    }
+    return null;
+});
 
 useSeoMeta({
     title: () =>
